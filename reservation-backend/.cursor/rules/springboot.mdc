@@ -1,0 +1,120 @@
+---
+description: Spring Boot 4 + Java 25 conventions for reservation-backend
+alwaysApply: true
+---
+
+# Spring Boot — reservation-backend
+
+## Stack
+
+- Java **25**, Spring Boot **4.0.6**
+- Spring Web MVC, Spring Data JPA, PostgreSQL
+- OpenAPI: springdoc-openapi-starter-webmvc-ui **3.0.2**
+- Base package: `co.ba.richarddv.reservation_backend`
+
+## Project layout (current + target)
+
+```
+reservation-backend/                          # Maven module root
+├── pom.xml
+├── mvnw, mvnw.cmd
+├── .mvn/wrapper/
+├── src/main/java/co/ba/richarddv/reservation_backend/
+│   ├── ReservationBackendApplication.java    # entry point (exists)
+│   ├── config/                               # @Configuration, beans, OpenAPI
+│   ├── controller/                           # @RestController, HTTP layer
+│   ├── dto/                                  # request/response records
+│   ├── entity/                               # JPA @Entity
+│   ├── repository/                           # Spring Data JPA interfaces
+│   ├── service/                              # business logic (@Service)
+│   └── exception/                            # @ControllerAdvice, custom exceptions
+├── src/main/resources/
+│   └── application.properties                # exists (spring.application.name)
+└── src/test/java/co/ba/richarddv/reservation_backend/
+    └── ReservationBackendApplicationTests.java # exists
+```
+
+New code must follow this package layout. Do not put business logic in controllers or entities.
+
+## Naming (English only)
+
+- Classes, interfaces, enums, records, methods, fields, and parameters: **English**, `PascalCase` / `camelCase` as per Java conventions.
+- REST paths and JSON property names: English, kebab-case or camelCase consistently (prefer camelCase in JSON to match Java records).
+- Database table/column names: `snake_case` if mapped explicitly; otherwise follow JPA defaults.
+- No Spanish identifiers in source code (comments in Spanish are allowed but prefer English for API-facing docs).
+
+## Java 25 & Spring Boot practices
+
+- Prefer **constructor injection** (explicit constructors; no field injection).
+- Use `Optional` only as a return type from repositories/services, not in DTOs or controller parameters.
+- Use `record` for immutable value types (DTOs, commands, queries, projections).
+- Use `sealed` interfaces/classes when modeling closed domain hierarchies.
+- Prefer `var` only when the type is obvious from the right-hand side.
+- Validate input with Jakarta Bean Validation (`@Valid`, `@NotNull`, etc.) on request DTOs.
+- Map Entity ↔ DTO in the service layer (or dedicated mapper), never expose entities from REST.
+- Transactions: `@Transactional` on service methods, read-only when applicable.
+- Repositories: extend `JpaRepository<Entity, Id>`; custom queries with `@Query` or method names.
+- Controllers: thin — delegate to services; return `ResponseEntity<T>` when status/body vary.
+- Exceptions: domain exceptions + `@RestControllerAdvice` with consistent error DTO (record).
+- Configuration: externalize in `application.properties` / profiles; no secrets in source.
+- Tests: `@SpringBootTest` for integration; slice tests (`@WebMvcTest`, `@DataJpaTest`) when focused.
+
+## DTOs — Java records
+
+- All API request/response types live under `dto/` as **records**.
+- Name: `CreateReservationRequest`, `ReservationResponse`, etc.
+- Compact constructors for validation when needed; use Jackson annotations only when JSON shape differs from record components.
+- Do not use records for JPA entities.
+
+```java
+/**
+ * Payload to create a new reservation.
+ *
+ * @param guestName guest full name
+ * @param date      reservation date (ISO-8601)
+ */
+public record CreateReservationRequest(
+        @NotBlank String guestName,
+        @NotNull LocalDate date
+) {}
+```
+
+## Javadoc (mandatory on public API)
+
+Every **public** class, interface, enum, record, and **public** method must have up-to-date Javadoc:
+
+- Summary sentence in English.
+- `@param` for each parameter, `@return` when not void, `@throws` for declared/checked or documented runtime cases.
+- Keep in sync when signatures change; remove stale tags.
+
+```java
+/**
+ * Creates a reservation for the given request.
+ *
+ * @param request validated creation payload
+ * @return the created reservation representation
+ * @throws ReservationConflictException if the slot is unavailable
+ */
+public ReservationResponse createReservation(CreateReservationRequest request) {
+    // ...
+}
+```
+
+## REST & OpenAPI
+
+- Annotate controllers for springdoc (`@Tag`, `@Operation`, `@ApiResponse`) on public endpoints.
+- Use correct HTTP verbs and status codes (201 + `Location` on create, 204 on delete without body).
+- Version APIs if needed (`/api/v1/...`).
+
+## JPA entities
+
+- `entity/` package; prefer explicit accessors over Lombok unless the project adopts it.
+- `@Entity`, `@Table`, `@Id`, `@GeneratedValue`; equals/hashCode on business key or id only.
+- Lazy associations by default; avoid `EAGER` unless justified.
+
+## Code quality
+
+- No wildcard imports; no unused code.
+- Logging: SLF4J (`private static final Logger log = LoggerFactory.getLogger(...)`).
+- Avoid `System.out.println` in production code.
+- Match existing indentation (tabs in this project) and Spring Boot style.
