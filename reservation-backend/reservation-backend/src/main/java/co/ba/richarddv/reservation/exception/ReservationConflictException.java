@@ -3,9 +3,14 @@ package co.ba.richarddv.reservation.exception;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 /**
  * Thrown when attempting to create a reservation for a date and time that is already taken.
  */
+
+@ResponseStatus(HttpStatus.CONFLICT)
 public class ReservationConflictException extends ReservationBusinessException {
 
 	/**

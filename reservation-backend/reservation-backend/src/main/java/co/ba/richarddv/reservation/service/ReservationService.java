@@ -1,18 +1,20 @@
 package co.ba.richarddv.reservation.service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import co.ba.richarddv.reservation.entity.ReservationEntity;
+import co.ba.richarddv.reservation.dto.CreateReservationRequest;
+import co.ba.richarddv.reservation.dto.ReservationResponse;
 import co.ba.richarddv.reservation.entity.ReservationStatus;
 import co.ba.richarddv.reservation.exception.ReservationAlreadyCancelledException;
 import co.ba.richarddv.reservation.exception.ReservationConflictException;
 import co.ba.richarddv.reservation.exception.ReservationNotFoundException;
+import co.ba.richarddv.reservation.mapper.ReservationMapper;
 import co.ba.richarddv.reservation.repository.ReservationRepository;
 
 /**
@@ -24,72 +26,65 @@ public class ReservationService {
 	private static final Logger log = LoggerFactory.getLogger(ReservationService.class);
 
 	private final ReservationRepository reservationRepository;
+	private final ReservationMapper 	reservationMapper;
 
 	/**
-	 * Creates the service with the required repository dependency.
+	 * Creates the service with its required collaborators.
 	 *
-	 * @param reservationRepository persistence access for reservations
-	 */
-	public ReservationService(ReservationRepository reservationRepository) {
+	 * @param reservationRepository persistence gateway for reservations
+	 * @param reservationMapper     entity/DTO mapper conexión al to
+	 */	
+	public ReservationService(ReservationRepository reservationRepository, ReservationMapper reservationMapper) {
 		this.reservationRepository = reservationRepository;
+		this.reservationMapper = reservationMapper;
 	}
 
 	/**
-	 * Creates a reservation only when no other active reservation exists for the same date and time.
+	 * Creates a reservation when the requested date and time slot is available.
 	 *
-	 * @param customerName guest name
-	 * @param date         reservation date
-	 * @param time         reservation time
-	 * @param service      requested service description
-	 * @return the persisted reservation
-	 * @throws ReservationConflictException if an active reservation already occupies the slot
+	 * @param request validated creation payload
+	 * @return the created reservation representation
+	 * @throws ReservationConflictException if an active reservation already exists for the slot
 	 */
 	@Transactional
-	public ReservationEntity createReservation(
-			String customerName,
-			LocalDate date,
-			LocalTime time,
-			String service) {
-		if (reservationRepository.existsByDateAndTimeAndStatus(date, time, ReservationStatus.ACTIVO)) {
-			log.warn("Reservation conflict for date {} and time {}", date, time);
-			throw new ReservationConflictException(date, time);
+	public ReservationResponse createReservation(CreateReservationRequest request) {
+		if (reservationRepository.existsByDateAndTimeAndStatus( //conecta al repositorio y verifica si existe algún registro para esta fecha, hora y estatus
+				request.date(), request.time(), ReservationStatus.ACTIVO)) { //el request que le mandamos
+			throw new ReservationConflictException(request.date(), request.time()); //Crea una clase para manejar errores
 		}
 
-		var reservation = new ReservationEntity();
-		reservation.setCostumerName(customerName);
-		reservation.setDate(date);
-		reservation.setTime(time);
-		reservation.setService(service);
-		reservation.setStatus(ReservationStatus.ACTIVO);
-
-		var saved = reservationRepository.save(reservation);
-		log.info("Created reservation id {} for date {} at {}", saved.getId(), date, time);
-		return saved;
+		var entity = reservationMapper.toEntity(request); //Lo que hace es que el DTO De arriba, el protocolo de envío de datos lo convierte en entidad
+		var saved = reservationRepository.save(entity); //GUardame los datos que tengo de esta entidad
+		log.info("Created reservation id={} for date={} time={}", saved.getId(), saved.getDate(), saved.getTime());
+		return reservationMapper.toResponse(saved); //Coge la entidad guardada, conviertela en respuesta y la reotrna en la función
 	}
 
 	/**
-	 * Cancels an active reservation by its identifier.
+	 * Cancels an existing reservation by its identifier.
 	 *
 	 * @param id reservation identifier
 	 * @throws ReservationNotFoundException         if no reservation exists with the given id
 	 * @throws ReservationAlreadyCancelledException if the reservation is already cancelled
 	 */
 	@Transactional
-	public void cancelReservation(Long id) {
-		var reservation = reservationRepository.findById(id)
-				.orElseThrow(() -> {
-					log.warn("Reservation not found for cancellation, id {}", id);
-					return new ReservationNotFoundException(id);
-				});
+	public ReservationResponse cancelReservation(Long id) {
+		var entity = reservationRepository.findById(id)
+				.orElseThrow(() -> new ReservationNotFoundException(id)); //busca un id de  una reserva, si no pues excepción
 
-		if (reservation.getStatus() == ReservationStatus.CANCELADA) {
-			log.warn("Attempt to cancel already cancelled reservation id {}", id);
+		if (entity.getStatus() == ReservationStatus.CANCELADA) {
 			throw new ReservationAlreadyCancelledException(id);
-		}
+		} //Si esa reserva es cancelada, decir que ya se encuentra cancelada
 
-		reservation.setStatus(ReservationStatus.CANCELADA);
-		reservationRepository.save(reservation);
-		log.info("Cancelled reservation id {}", id);
+		entity.setStatus(ReservationStatus.CANCELADA);
+		var saved = reservationRepository.save(entity);
+		return reservationMapper.toResponse(saved);
+
+	}
+
+	public List<ReservationResponse> getAllReservation(){ //lístame todas las reservas 
+		return reservationRepository.findAll().stream() //Las busca en el repo
+			.map(reservationMapper::toResponse) //Mapea eso conviertiendolo en una respuesta 
+			.toList();
 	}
 
 }

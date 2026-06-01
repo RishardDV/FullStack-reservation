@@ -1,8 +1,12 @@
 package co.ba.richarddv.reservation.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 /**
  * Thrown when attempting to cancel a reservation that is already cancelled.
  */
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ReservationAlreadyCancelledException extends ReservationBusinessException {
 
 	/**

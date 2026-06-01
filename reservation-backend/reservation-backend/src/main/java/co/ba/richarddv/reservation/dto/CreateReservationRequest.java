@@ -15,8 +15,9 @@ import jakarta.validation.constraints.NotNull;
  * @param service      requested service description
  */
 public record CreateReservationRequest(
-		@NotBlank String customerName,
-		@NotNull LocalDate date,
-		@NotNull LocalTime time,
-		@NotBlank String service) {
+		String customerName,
+		LocalDate date,
+		LocalTime time,
+		String service
+	) {
 }
