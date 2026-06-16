@@ -1,0 +1,132 @@
+<nav class="usuario-nav" aria-label="Navegación principal">
+  <a routerLink="/principal">Inicio</a>
+  <a routerLink="/sobrenosotros">Sobre nosotros</a>
+  <a routerLink="/contactanos">Contactanos</a>
+  <a
+    class="userReserva"
+    routerLink="/nueva_reserva"
+    [queryParams]="{ from: 'usuario' }"
+  >
+    Reservar ahora
+  </a>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">
+    Castilejo Restaurante
+  </div>
+  <h1>Tu quiosco perfecto<br>te está esperando</h1>
+  <p>Donde el sabor del mar y la tranquilidad se encuentran.</p>
+  <div class="hero-actions">
+    <a
+      class="btn-primary"
+      routerLink="/nueva_reserva"
+      [queryParams]="{ from: 'usuario' }"
+    >
+      Ver disponibilidad
+    </a>
+    <a class="btn-ghost" routerLink="/sobrenosotros">Sobre nosotros</a>
+  </div>
+  <svg class="hero-wave" viewBox="0 0 680 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,28 C100,8 200,40 320,22 C440,4 560,38 680,18 L680,40 L0,40Z"/>
+  </svg>
+</section>
+
+<section class="info_res">
+    
+</section>
+<section class="usuario" aria-labelledby="usuario-title">
+  <header class="usuario-header">
+    <div class="brand">
+      <p class="brand__eyebrow">Cabañas frente al mar</p>
+      <h2 id="usuario-title">Reserva tu estadía</h2>
+      <p class="usuario-subtitle">
+        Elige fecha, hora y servicio para asegurar tu lugar junto al mar.
+      </p>
+    </div>
+  </header>
+
+
+
+  <div class="usuario-actions">
+    <a
+      routerLink="/nueva_reserva"
+      [queryParams]="{ from: 'usuario' }"
+      class="create-link"
+    >
+      Crear reserva
+    </a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <h3 class="footer__title">Castillejo Restaurante</h3>
+        <p class="footer__description">
+          Experiencias inolvidables frente al mar, gastronomía de calidad y hospedaje en un entorno natural único.
+        </p>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__heading">Contacto</h4>
+        <ul class="footer__list">
+          <li>Número de teléfono</li>
+          <li>Horarios de atención</li>
+          <li>Canal de WhatsApp para reservas</li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__heading">Ubicación</h4>
+        <ul class="footer__list">
+          <li>Caño Dulce, Atlántico, Colombia</li>
+          <li>Referencias para llegar</li>
+          <li>Enlace a mapas o ubicación GPS</li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__heading">Servicios</h4>
+        <ul class="footer__list">
+          <li>Restaurante de comida de mar</li>
+          <li>Cabañas y hospedaje</li>
+          <li>Eventos y celebraciones</li>
+          <li>Reservas personalizadas</li>
+          <li>Experiencias frente al mar</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__secondary">
+      <div class="footer__col">
+        <h4 class="footer__heading">Enlaces rápidos</h4>
+        <ul class="footer__list footer__list--links">
+          <li><a routerLink="/principal">Inicio</a></li>
+          <li><a routerLink="/sobrenosotros">Sobre nosotros</a></li>
+          <li>
+            <a routerLink="/nueva_reserva" [queryParams]="{ from: 'usuario' }">Crear reservas</a>
+          </li>
+          <li><a href="#">Menú</a></li>
+          <li><a href="#">Galería</a></li>
+          <li><a routerLink="/contactanos">Contáctanos</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__heading">Información legal</h4>
+        <ul class="footer__list footer__list--links">
+          <li><a href="#">Política de privacidad</a></li>
+          <li><a href="#">Términos y condiciones</a></li>
+          <li><a href="#">Política de cancelación de reservas</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p class="footer__copyright">© 2026 Castillejo Restaurante. Todos los derechos reservados.</p>
+      <p class="footer__tagline">Donde el sabor del mar y la tranquilidad se encuentran.</p>
+    </div>
+  </div>
+</footer>

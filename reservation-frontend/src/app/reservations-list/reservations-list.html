@@ -1,0 +1,77 @@
+<section class="reservations" aria-labelledby="reservations-title">
+  <header class="reservations-header">
+    <div class="brand">
+      <p class="brand__eyebrow">Cabañas frente al mar</p>
+      <h1 id="reservations-title">Reservas</h1>
+    </div>
+    <a routerLink="/nueva_reserva" class="create-link">Nueva reserva</a>
+  </header>
+
+  @if (loading()) {
+    <p class="status-message" role="status" aria-live="polite">Cargando reservas...</p>
+  } @else if (error()) {
+    <p class="error-message" role="alert">{{ error() }}</p>
+    <button type="button" class="retry-button" (click)="loadReservations()">
+      Reintentar
+    </button>
+  } @else if (reservations().length === 0) {
+    <p class="status-message">No hay reservas registradas.</p>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <caption class="visually-hidden">Listado de reservas</caption>
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Hora</th>
+            <th scope="col">Servicio</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (reservation of reservations(); track reservation.id) {
+            <tr>
+              <td>{{ reservation.id }}</td>
+              <td>{{ reservation.customerName }}</td>
+              <td>{{ reservation.date }}</td>
+              <td>{{ reservation.time }}</td>
+              <td>{{ reservation.service }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class.status-badge--active]="reservation.status === ReservationStatus.ACTIVO"
+                  [class.status-badge--cancelled]="reservation.status === ReservationStatus.CANCELADA"
+                >
+                  {{ statusLabel(reservation.status) }}
+                </span>
+              </td>
+              <td>
+                @if (canCancel(reservation)) {
+                  <button
+                    type="button"
+                    class="cancel-button"
+                    (click)="cancelReservation(reservation.id)"
+                    [disabled]="cancellingId() === reservation.id"
+                    [attr.aria-busy]="cancellingId() === reservation.id"
+                    [attr.aria-label]="'Cancelar reserva de ' + reservation.customerName"
+                  >
+                    @if (cancellingId() === reservation.id) {
+                      Cancelando...
+                    } @else {
+                      Cancelar
+                    }
+                  </button>
+                } @else {
+                  <span class="no-action">—</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

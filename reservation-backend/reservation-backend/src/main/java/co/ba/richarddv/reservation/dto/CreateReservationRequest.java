@@ -3,8 +3,6 @@ package co.ba.richarddv.reservation.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 /**
  * Payload to create a new reservation.

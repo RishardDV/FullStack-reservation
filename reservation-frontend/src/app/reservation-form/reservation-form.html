@@ -1,0 +1,82 @@
+<section class="form-section" aria-labelledby="reservation-form-title">
+  <header class="form-header">
+    <p class="brand__eyebrow">Cabañas frente al mar</p>
+    <h1 id="reservation-form-title">Nueva reserva</h1>
+    <a [routerLink]="returnPath" class="back-link">{{ returnLabel }}</a> <!--Volver a la página anterior--> 
+  </header>
+
+  <form class="reservation-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="form-field">
+      <label for="nombreCliente">Nombre del cliente</label>
+      <input
+        id="nombreCliente"
+        type="text"
+        formControlName="nombreCliente"
+        autocomplete="name"
+        [attr.aria-invalid]="isInvalid('nombreCliente')"
+        [attr.aria-describedby]="isInvalid('nombreCliente') ? 'nombreCliente-error' : null"
+      />
+      @if (fieldError('nombreCliente'); as error) {
+        <p id="nombreCliente-error" class="field-error" role="alert">{{ error }}</p>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="fecha">Fecha</label>
+      <input
+        id="fecha"
+        type="date"
+        formControlName="fecha"
+        [attr.aria-invalid]="isInvalid('fecha')"
+        [attr.aria-describedby]="isInvalid('fecha') ? 'fecha-error' : null"
+      />
+      @if (fieldError('fecha'); as error) {
+        <p id="fecha-error" class="field-error" role="alert">{{ error }}</p>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="hora">Hora</label>
+      <input
+        id="hora"
+        type="time"
+        formControlName="hora"
+        [attr.aria-invalid]="isInvalid('hora')"
+        [attr.aria-describedby]="isInvalid('hora') ? 'hora-error' : null"
+      />
+      @if (fieldError('hora'); as error) {
+        <p id="hora-error" class="field-error" role="alert">{{ error }}</p>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="servicio">Servicio</label>
+      <select
+        id="servicio"
+        formControlName="servicio"
+        [attr.aria-invalid]="isInvalid('servicio')"
+        [attr.aria-describedby]="isInvalid('servicio') ? 'servicio-error' : null"
+      >
+        <option value="" disabled>Selecciona un servicio</option>
+        @for (service of services; track service) {
+          <option [value]="service">{{ service }}</option>
+        }
+      </select>
+      @if (fieldError('servicio'); as error) {
+        <p id="servicio-error" class="field-error" role="alert">{{ error }}</p>
+      }
+    </div>
+
+    <button type="submit" class="submit-button" [disabled]="submitting()">
+      @if (submitting()) {
+        Guardando...
+      } @else {
+        Crear reserva
+      }
+    </button>
+  </form>
+</section>
+
+@if (toastMessage(); as message) {
+  <app-toast [message]="message" type="error" (dismiss)="dismissToast()" />
+}

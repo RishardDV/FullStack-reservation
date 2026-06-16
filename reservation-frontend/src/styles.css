@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+  /* Arena y espuma */
+  --sand-50: #fdfaf6;
+  --sand-100: #f5ebe0;
+  --sand-200: #e8dcc8;
+  --sand-300: #d4c4a8;
+
+  /* Océano */
+  --ocean-50: #ecfeff;
+  --ocean-100: #cffafe;
+  --ocean-200: #a5f3fc;
+  --ocean-500: #0891b2;
+  --ocean-600: #0e7490;
+  --ocean-700: #155e75;
+  --ocean-800: #164e63;
+
+  /* Atardecer / coral */
+  --coral-400: #f4a261;
+  --coral-500: #e76f51;
+  --coral-600: #d45d3f;
+
+  /* Texto */
+  --text-primary: #1a3340;
+  --text-secondary: #3d5a66;
+  --text-muted: #5c7a87;
+
+  /* Estados */
+  --success-bg: #e6f7f0;
+  --success-text: #0d6b4f;
+  --error-bg: #fef2f0;
+  --error-text: #b42318;
+
+  /* Superficies */
+  --surface-card: rgba(255, 255, 255, 0.82);
+  --surface-input: rgba(255, 255, 255, 0.95);
+  --border-soft: rgba(14, 116, 144, 0.14);
+  --border-medium: rgba(14, 116, 144, 0.22);
+
+  /* Sombras */
+  --shadow-sm: 0 1px 3px rgba(22, 78, 99, 0.06);
+  --shadow-md: 0 8px 24px rgba(22, 78, 99, 0.1);
+  --shadow-lg: 0 16px 48px rgba(22, 78, 99, 0.12);
+  --shadow-glow: 0 4px 20px rgba(8, 145, 178, 0.25);
+
+  /* Tipografía y forma */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-full: 999px;
+
+  /* Transiciones */
+  --transition-fast: 0.15s ease;
+  --transition-smooth: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--sand-50);
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(8, 145, 178, 0.14), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 100% 50%, rgba(244, 162, 97, 0.08), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(8, 145, 178, 0.06), transparent 45%),
+    linear-gradient(165deg, var(--sand-50) 0%, var(--ocean-50) 45%, var(--sand-100) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ocean-500);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

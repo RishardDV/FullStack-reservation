@@ -1,0 +1,15 @@
+<div
+  class="toast"
+  [class.toast--error]="type() === 'error'"
+  [class.toast--success]="type() === 'success'"
+>
+  <p class="toast__message">{{ message() }}</p>
+  <button
+    type="button"
+    class="toast__close"
+    (click)="close()"
+    aria-label="Cerrar notificación"
+  >
+    ×
+  </button>
+</div>
