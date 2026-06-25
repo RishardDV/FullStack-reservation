@@ -27,4 +27,12 @@ export const routes: Routes = [
         (m) => m.ReservationForm,
       ),
   },
+  
+  {
+    path: 'galery',
+    loadComponent: () =>
+      import('./galery_interfaz/galery').then(
+        (m) => m.galeryInteraz,
+      ),
+  },
 ];
